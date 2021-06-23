@@ -29,9 +29,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "secp256k1"),
+        .target(name: "libscrypt"),
         .target(
             name: "web3swift",
-            dependencies: ["BigInt", "secp256k1", "PromiseKit", "Starscream", "CryptoSwift"],
+            dependencies: ["BigInt", "secp256k1", "PromiseKit", "Starscream", "CryptoSwift", "libscrypt"],
             exclude: excludeFiles,
             resources: [
                 .copy("./Browser/browser.js"),

@@ -29,7 +29,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "secp256k1"),
-        .target(name: "libscrypt"),
+        .target(name: "libscrypt", sources: ["libscrypt/crypto_scrypt-nosse.c",
+                                             "libscrypt/sha256.c",
+                                             "libscrypt/slowequals.c",
+            ]),
         .target(
             name: "web3swift",
             dependencies: ["BigInt", "secp256k1", "PromiseKit", "Starscream", "CryptoSwift", "libscrypt"],

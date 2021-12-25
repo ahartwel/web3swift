@@ -12,6 +12,7 @@ import PromiseKit
 //Token Standard
 protocol IERC20 {
     func getBalance(account: EthereumAddress) throws -> BigUInt
+    func getBalance(account: EthereumAddress, blockPolicy: CallingBlockPolicy) throws -> BigUint
     func getAllowance(originalOwner: EthereumAddress, delegate: EthereumAddress) throws -> BigUInt
     func transfer(from: EthereumAddress, to: EthereumAddress, amount: String) throws -> WriteTransaction
     func transferFrom(from: EthereumAddress, to: EthereumAddress, originalOwner: EthereumAddress, amount: String) throws -> WriteTransaction
@@ -106,11 +107,11 @@ public class ERC20: IERC20 {
             self._hasReadProperties = true
         }.wait()
     }
-    
-    public func getBalance(account: EthereumAddress) throws -> BigUInt {
+
+    public func getBalance(account: EthereumAddress, blockPolicy: CallingBlockPolicy = .latest) throws -> BigUInt {
         let contract = self.contract
         var transactionOptions = TransactionOptions()
-        transactionOptions.callOnBlock = .latest
+        transactionOptions.callOnBlock = blockPolicy
         let result = try contract.read("balanceOf", parameters: [account] as [AnyObject], extraData: Data(), transactionOptions: self.transactionOptions)!.call(transactionOptions: transactionOptions)
         guard let res = result["0"] as? BigUInt else {throw Web3Error.processingError(desc: "Failed to get result of expected type from the Ethereum node")}
         return res

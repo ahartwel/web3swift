@@ -106,6 +106,10 @@ public class ERC1633: IERC1633 {
     }
     
     public func getBalance(account: EthereumAddress) throws -> BigUInt {
+        return try self.getBalance(account: account, blockPolicy: .latest)
+    }
+    
+    public func getBalance(account: EthereumAddress, blockPolicy: TransactionOptions.CallingBlockPolicy) throws -> BigUInt {
         let contract = self.contract
         var transactionOptions = TransactionOptions()
         transactionOptions.callOnBlock = .latest

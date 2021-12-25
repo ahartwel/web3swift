@@ -108,9 +108,13 @@ public class ERC1644: IERC1644 {
     }
     
     public func getBalance(account: EthereumAddress) throws -> BigUInt {
+        return try self.getBalance(account: account, blockPolicy: .latest)
+    }
+    
+    public func getBalance(account: EthereumAddress, blockPolicy: TransactionOptions.CallingBlockPolicy) throws -> BigUInt {
         let contract = self.contract
         var transactionOptions = TransactionOptions()
-        transactionOptions.callOnBlock = .latest
+        transactionOptions.callOnBlock = blockPolicy
         let result = try contract.read("balanceOf", parameters: [account] as [AnyObject], extraData: Data(), transactionOptions: self.transactionOptions)!.call(transactionOptions: transactionOptions)
         guard let res = result["0"] as? BigUInt else {throw Web3Error.processingError(desc: "Failed to get result of expected type from the Ethereum node")}
         return res

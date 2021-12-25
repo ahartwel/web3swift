@@ -12,7 +12,7 @@ import PromiseKit
 //Token Standard
 protocol IERC20 {
     func getBalance(account: EthereumAddress) throws -> BigUInt
-    func getBalance(account: EthereumAddress, blockPolicy: CallingBlockPolicy) throws -> BigUint
+    func getBalance(account: EthereumAddress, blockPolicy: TransactionOptions.CallingBlockPolicy) throws -> BigUInt
     func getAllowance(originalOwner: EthereumAddress, delegate: EthereumAddress) throws -> BigUInt
     func transfer(from: EthereumAddress, to: EthereumAddress, amount: String) throws -> WriteTransaction
     func transferFrom(from: EthereumAddress, to: EthereumAddress, originalOwner: EthereumAddress, amount: String) throws -> WriteTransaction

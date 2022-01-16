@@ -119,16 +119,9 @@ public class WriteTransaction: ReadTransaction {
             when(resolved: getNoncePromise!, gasEstimatePromise!, gasPricePromise!).map(on: queue, { (results:[PromiseResult<BigUInt>]) throws -> EthereumTransaction in
                 
                 promisesToFulfill.removeAll()
-                guard case .fulfilled(let nonce) = results[0] else {
-                    throw Web3Error.processingError(desc: "Failed to fetch nonce")
-                }
-                guard case .fulfilled(let gasEstimate) = results[1] else {
-                    throw Web3Error.processingError(desc: "Failed to fetch gas estimate")
-                }
-                guard case .fulfilled(let gasPrice) = results[2] else {
-                    throw Web3Error.processingError(desc: "Failed to fetch gas price")
-                }
-                
+                let nonce = try results[0].extractValue()
+                let gasEstimate = try results[1].extractValue()
+                let gasPrice = try results[2].extractValue()
                 guard let estimate = mergedOptions.resolveGasLimit(gasEstimate) else {
                     throw Web3Error.processingError(desc: "Failed to calculate gas estimate that satisfied options")
                 }
@@ -190,5 +183,18 @@ public class WriteTransaction: ReadTransaction {
     
     public func assemble(transactionOptions: TransactionOptions? = nil) throws -> EthereumTransaction {
         return try self.assemblePromise(transactionOptions: transactionOptions).wait()
+    }
+}
+
+extension Result {
+    func extractValue() throws -> T {
+        switch self {
+        case .fulfilled(let value):
+            return value
+        case .rejected(let error):
+            throw Web3Error.processingError(
+                desc: error.localizedDescription
+            )
+        }
     }
 }
